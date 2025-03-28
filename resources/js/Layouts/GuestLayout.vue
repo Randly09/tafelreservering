@@ -1,22 +1,34 @@
-<script setup>
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import { Link } from '@inertiajs/vue3';
-</script>
-
 <template>
-    <div
-        class="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0"
-    >
-        <div>
-            <Link href="/">
-                <ApplicationLogo class="h-20 w-20 fill-current text-gray-500" />
-            </Link>
+    <!-- Full-height container with a vertical gradient -->
+    <div class="min-h-screen bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 text-white flex flex-col">
+      
+      <!-- Center content with extra vertical padding -->
+      <div class="flex flex-col items-center justify-center pt-10">
+        
+        <!-- Restaurant Logo -->
+        <div >
+          <!-- Update the src to your actual logo file in /public/images/ -->
+          <img
+            src="/images/logo.png"
+            alt="Restaurant Logo"
+            class="w-70 h-60 mx-auto rounded-xl"
+          />
         </div>
-
-        <div
-            class="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg"
-        >
-            <slot />
+  
+        <!-- Form Container -->
+        <div class="w-full max-w-md  rounded-xl">
+          <!-- The slot is where Login/Register content goes -->
+          <slot />
         </div>
+  
+      </div>
     </div>
-</template>
+  </template>
+  
+  <script setup>
+  // No script needed unless you want additional props or logic
+  </script>
+  
+  <style scoped>
+  /* You can add custom CSS here, but the Tailwind classes above handle most spacing. */
+  </style>

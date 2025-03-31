@@ -5,6 +5,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Models\Table;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\TableController;
+use App\Models\Reservation;
 use Inertia\Inertia;
 use App\Http\Controllers\API\TableAvailabilityController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -38,6 +40,36 @@ Route::middleware('auth')->group(function () {
     Route::get('/beheerder', function () {
         return Inertia::render('BeheerderDashboard');
     })->name('beheerder.home');
+    Route::get('/beheerder', function () {
+        $reservations = Reservation::with(['table', 'user'])
+            ->latest() 
+            ->limit(10)
+            ->get();
+
+        return Inertia::render('BeheerderDashboard', [
+            'reservations' => $reservations,
+        ]);
+    })->name('beheerder.home')->middleware('auth');
+    Route::get('/beheerder/tables', [TableController::class, 'index'])
+        ->name('beheerderTables.index');
+
+    // Create a new table (assuming a form posts to this endpoint)
+    Route::post('/beheerder/tables', [TableController::class, 'store'])
+        ->name('beheerderTables.store');
+
+    // Update an existing table (PUT or PATCH method)
+    Route::match(['put', 'patch'], '/beheerder/tables/{table}', [TableController::class, 'update'])
+        ->name('beheerderTables.update');
+
+    // Delete a table
+    Route::delete('/beheerder/tables/{table}', [TableController::class, 'destroy'])
+        ->name('beheerderTables.destroy');
+
+        Route::middleware('auth')->group(function () {
+            Route::get('/beheerder/reservations', [TableController::class, 'adminIndex'])
+                 ->name('beheerderReservations.index');
+        });
+
 
     // Klant reservations page route
     Route::get('/reservations', function () {
@@ -55,15 +87,15 @@ Route::middleware('auth')->group(function () {
     })->name('book-table')->middleware('auth');
     Route::middleware('auth')->group(function () {
         Route::post('/reservations', [ReservationController::class, 'store'])
-             ->name('reservations.store');
+            ->name('reservations.store');
     });
     Route::get('/reserved-tables', [ReservationController::class, 'index'])
-    ->name('reservedTables.index');
+        ->name('reservedTables.index');
 
     Route::delete('/reservations/{id}', [ReservationController::class, 'destroy'])
-     ->name('reservations.destroy')
-     ->middleware('auth');
-         
+        ->name('reservations.destroy')
+        ->middleware('auth');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

@@ -24,14 +24,15 @@
                 <table class="min-w-full text-black">
                     <thead class="bg-gray-200">
                         <tr>
-                            <th class="py-3 px-4 text-left">Table</th>
-                            <th class="py-3 px-4 text-left">Location</th>
-                            <th class="py-3 px-4 text-left">Date</th>
-                            <th class="py-3 px-4 text-left">Time</th>
-                            <th class="py-3 px-4 text-left">Phone Number</th>
-                            <th class="py-3 px-4 text-left">Occasion</th>
-                            <th class="py-3 px-4 text-left">Status</th>
-                            <th class="py-3 px-4 text-left">Action</th>
+                            <th class="py-3 px-4 text-center">Table</th>
+                            <th class="py-3 px-4 text-center">Seating</th>
+                            <th class="py-3 px-4 text-center">Max people</th>
+                            <th class="py-3 px-4 text-center">Date</th>
+                            <th class="py-3 px-4 text-center">Time</th>
+                            <th class="py-3 px-4 text-center">Phone Number</th>
+                            <th class="py-3 px-4 text-center">Occasion</th>
+                            <th class="py-3 px-4 text-center">Status</th>
+                            <th class="py-3 px-4 text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,30 +41,37 @@
                             :key="reservation.id"
                             class="border-b last:border-b-0"
                         >
-                            <td class="py-3 px-4">
+                            <td class="py-3 px-4 text-center">
                                 {{
                                     reservation.table
                                         ? reservation.table.name
                                         : "N/A"
                                 }}
                             </td>
-                            <td class="py-3 px-4">
+                            <td class="py-3 px-4 text-center">
                                 {{
                                     reservation.table
                                         ? reservation.table.location
                                         : "N/A"
                                 }}
                             </td>
-                            <td class="py-3 px-4">{{ reservation.date }}</td>
-                            <td class="py-3 px-4">{{ reservation.time }}</td>
-                            <td class="py-3 px-4">
+                            <td class="py-3 px-4 text-center">
+                                {{
+                                    reservation.table
+                                        ? reservation.table.capacity
+                                        : "N/A"
+                                }}
+                            </td>
+                            <td class="py-3 px-4 text-center">{{ reservation.date }}</td>
+                            <td class="py-3 px-4 text-center">{{ reservation.time }}</td>
+                            <td class="py-3 px-4 text-center">
                                 {{ reservation.phone_number }}
                             </td>
-                            <td class="py-3 px-4">
+                            <td class="py-3 px-4 text-center">
                                 {{ reservation.Occasion }}
                             </td>
-                            <td class="py-3 px-4">{{ reservation.status }}</td>
-                            <td class="py-3 px-4">
+                            <td class="py-3 px-4 text-center">{{ reservation.status }}</td>
+                            <td class="py-3 px-4 text-center">
                                 <button
                                     class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                                     @click="cancelReservation(reservation.id)"

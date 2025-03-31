@@ -13,11 +13,11 @@ class TableSeeder extends Seeder
      */
     public function run(): void
     {
-        Table::create(['name' => 'Tafel 1', 'capacity' => 4, 'location' => 'Binnen']);
-        Table::create(['name' => 'Tafel 2', 'capacity' => 2, 'location' => 'Buiten']);
-        Table::create(['name' => 'Tafel 3', 'capacity' => 6, 'location' => 'Binnen']);
-        Table::create(['name' => 'Tafel 4', 'capacity' => 8, 'location' => 'Binnen']);
-        Table::create(['name' => 'Tafel 5', 'capacity' => 2, 'location' => 'Buiten']);
-        Table::create(['name' => 'Tafel 6', 'capacity' => 4, 'location' => 'Buiten']);
+        Table::create(['name' => 'Two Pair Table', 'capacity' => 4, 'location' => 'Inside']);
+        Table::create(['name' => 'The Duo Table', 'capacity' => 2, 'location' => 'Outside']);
+        Table::create(['name' => 'Round Table', 'capacity' => 6, 'location' => 'Inside']);
+        Table::create(['name' => 'The Party Table', 'capacity' => 8, 'location' => 'Inside']);
+        Table::create(['name' => 'The Duo Table', 'capacity' => 2, 'location' => 'Outside']);
+        Table::create(['name' => 'Two Pair Table', 'capacity' => 4, 'location' => 'Outside']);
     }
 }

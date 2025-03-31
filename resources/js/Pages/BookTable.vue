@@ -1,22 +1,30 @@
 <template>
   <GuestLayout>
     <Head title="Book Table" />
+                <!-- Return to Home button -->
+                <div class="mb-4 justify-center">
+                <Link
+                    :href="route('reservations.index')"
+                    class="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600"
+                >
+                    Return to Home
+                </Link>
+            </div>
     <div class="min-h-screen bg-gradient-to-b from-blue-900 to-blue-800 text-white flex items-center justify-center">
       <div class="bg-blue-900/80 rounded-xl shadow-xl px-8 py-10 max-w-lg w-full">
         <h1 class="text-3xl font-bold mb-4 text-center">
           Book Table: {{ table.name }}
         </h1>
-
         <!-- Conditional Image Based on Table Location -->
         <div class="mb-6 flex justify-center">
           <img
-            v-if="table.location === 'Binnen'"
+            v-if="table.location === 'Inside'"
             src="/images/InsideTable.jpg"
             alt="Binnen Setting"
             class="w-90 h-auto rounded"
           />
           <img
-            v-else-if="table.location === 'Buiten'"
+            v-else-if="table.location === 'Outside'"
             src="/images/outsideTable.jpg"
             alt="Buiten Setting"
             class="w-90 h-auto rounded"
@@ -84,6 +92,7 @@
 <script setup>
 import { Head, useForm } from '@inertiajs/vue3';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { Link } from "@inertiajs/vue3";
 
 const props = defineProps({
   table: {

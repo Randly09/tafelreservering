@@ -56,7 +56,7 @@ class ReservationController extends Controller
 
         // Add additional fields to the validated data
         $validated['user_id'] = Auth::id();
-        $validated['status'] = 'geboekt';
+        $validated['status'] = 'Booked';
 
 
         Reservation::create($validated);

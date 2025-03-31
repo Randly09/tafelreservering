@@ -26,7 +26,7 @@ class ReservationSeeder extends Seeder
             'number_of_people' => 4,
             'phone_number' => '0612345678',
             'Occasion' => 'Verjaardag',
-            'status' => 'geboekt',
+            'status' => 'Booked',
         ]);
     }
 }

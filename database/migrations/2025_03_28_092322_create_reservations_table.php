@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('date');
             $table->time('time');
             $table->integer('number_of_people');
-            $table->string('Occation')->nullable();
+            $table->string('Occasion')->nullable();
             $table->string('phone_number');
             $table->string('status')->default('pending');
             $table->timestamps();

@@ -8,11 +8,15 @@
           <!-- Update src to your actual logo path in /public/images/ -->
           <img src="/images/logo.png" alt="Restaurant Logo" class="w-70 h-40 mx-auto" />
         </div>
-  
+        <div>
+    <Link href="/reserved-tables"  class="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600">
+      Reserved Tables
+    </Link>
+  </div>
         <!-- Main Card Container -->
         <div class="w-full max-w-2xl bg-blue-900/80 rounded-xl shadow-xl px-8 py-10 mx-4">
           <h1 class="text-3xl font-bold mb-6 text-center">Available Tables</h1>
-  
+          
           <!-- Filter Form -->
           <form @submit.prevent="fetchTables" class="mb-6">
             <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
@@ -95,9 +99,9 @@
 
   const timeOptions = [];
   const startHour = 17;
-  const endHour = 20;
+  const endHour = 21;
   for (let hour = startHour; hour <= endHour; hour++) {
-    for (let minutes = 0; minutes < 60; minutes += 15) {
+    for (let minutes = 0; minutes < 60; minutes += 30) {
       const h = hour.toString().padStart(2, '0');
       const m = minutes.toString().padStart(2, '0');
       timeOptions.push(`${h}:${m}`);
@@ -123,7 +127,3 @@
     }
   }
   </script>
-  
-  <style scoped>
-  /* Additional custom styles if needed */
-  </style>

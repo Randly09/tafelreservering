@@ -15,7 +15,8 @@ class Reservation extends Model
     'date', 
     'time', 
     'phone_number', 
-    'Occation', 
+    'Occasion', 
+    'number_of_people',
     'status'
     ];
 

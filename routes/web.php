@@ -57,7 +57,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/reservations', [ReservationController::class, 'store'])
              ->name('reservations.store');
     });
+    Route::get('/reserved-tables', [ReservationController::class, 'index'])
+    ->name('reservedTables.index');
 
+    Route::delete('/reservations/{id}', [ReservationController::class, 'destroy'])
+     ->name('reservations.destroy')
+     ->middleware('auth');
+         
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

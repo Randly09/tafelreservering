@@ -6,36 +6,62 @@ use Illuminate\Http\Request;
 use App\Models\Reservation;
 use App\Models\Table;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class ReservationController extends Controller
 {
-    public function store(Request $request)
+
+    public function index()
     {
-        // Validate the incoming form data
-        $validated = $request->validate([
-            'table_id'      => 'required|exists:tables,id',
-            'date'          => 'required|date|after_or_equal:today',
-            'time'          => 'required',
-            'phone_number'  => 'required|string',
-            'Occation'      => 'nullable|string',
-            'number_of_people' => 'required|integer|min:1',
+        $reservations = Reservation::where('user_id', Auth::id())
+            ->with('table')
+            ->get();
+
+        // Pass the reservations to the Inertia view
+        return Inertia::render('ReservedTables', [
+            'reservations' => $reservations,
         ]);
+    }
 
-        // Retrieve the table to check its capacity
-        $table = Table::findOrFail($validated['table_id']);
+    public function destroy($id)
+    {
+        $reservation = Reservation::findOrFail($id);
 
-        // If the requested number of people exceeds the table's capacity, set it to the table's capacity
-        if ($validated['number_of_people'] > $table->capacity) {
-            $validated['number_of_people'] = $table->capacity;
+        // Ensure the reservation belongs to the authenticated user
+        if ($reservation->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
         }
 
-        // Add the authenticated user's id and default status
+        $reservation->delete();
+
+        return redirect()->back()->with('success', 'Reservation canceled successfully.');
+    }
+
+    public function store(Request $request)
+    {
+        // Validate the incoming form data (without number_of_people)
+        $validated = $request->validate([
+            'table_id' => 'required|exists:tables,id',
+            'date' => 'required|date|after_or_equal:today',
+            'time' => 'required',
+            'phone_number' => 'required|string',
+            'Occasion' => 'nullable|string',
+        ]);
+
+        // Retrieve the table to get its capacity
+        $table = Table::findOrFail($validated['table_id']);
+
+        // Automatically set number_of_people to the table's capacity
+        $validated['number_of_people'] = $table->capacity;
+
+        // Add additional fields to the validated data
         $validated['user_id'] = Auth::id();
         $validated['status'] = 'geboekt';
 
-        // Create the reservation record
+
         Reservation::create($validated);
 
+        return redirect()->route('reservedTables.index');
     }
 
 

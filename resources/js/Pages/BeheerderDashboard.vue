@@ -12,11 +12,6 @@
           <nav>
             <ul class="flex space-x-4">
               <li>
-                <Link :href="route('beheerderReservations.index')" class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600">
-                  Reservations
-                </Link>
-              </li>
-              <li>
                 <Link :href="route('beheerderTables.index')" class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600">
                   Tables
                 </Link>
@@ -38,7 +33,7 @@
                 <tr>
                   <th class="py-3 px-4 text-center">Reservation ID</th>
                   <th class="py-3 px-4 text-center">Table</th>
-                  <th class="py-3 px-4 text-center">User</th>
+                  <th class="py-3 px-4 text-center">Klant</th>
                   <th class="py-3 px-4 text-center">Date</th>
                   <th class="py-3 px-4 text-center">Time</th>
                   <th class="py-3 px-4 text-center">Phone</th>
@@ -75,12 +70,14 @@
   </template>
   
   <script setup>
-  import { Head, Link, usePage } from '@inertiajs/vue3'
-  import { computed } from 'vue'
-  
-  // Access the reservations prop passed from the route
-  const { props } = usePage()
-  const reservations = computed(() => props.reservations || [])
+import { Head, Link, usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
+
+
+const { props } = usePage()
+const reservations = computed(() => props.reservations || [])
+
+
   </script>
   <style>
 

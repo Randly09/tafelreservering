@@ -15,7 +15,6 @@ class TableController extends Controller
     {
         $reservations = Reservation::with(['table', 'user'])
             ->latest() // Orders by created_at descending
-            ->limit(10)
             ->get();
 
         return Inertia::render('BeheerderDashboard', [
@@ -35,53 +34,71 @@ class TableController extends Controller
             'tables' => $tables,
         ]);
     }
-
+    public function tablesData()
+    {
+        $tables = Table::all();
+        return response()->json($tables);
+    }
     public function store(Request $request)
     {
-        // Validate incoming data.
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'capacity' => 'required|integer|min:1',
+        $validatedData = $request->validate([
+            'name'     => 'required|string|max:255',
+            'capacity' => 'required|integer',
             'location' => 'required|string|max:255',
         ]);
 
-        // Create a new table record.
-        Table::create($validated);
+        $table = Table::create($validatedData);
 
-        // Redirect back to the admin tables page with a success message.
-        return redirect()->route('beheerderTables.index')
-            ->with('success', 'Table created successfully.');
+        return response()->json($table, 201);
     }
+
 
     /**
      * Update the specified table in storage.
      */
-    public function update(Request $request, Table $table)
+    public function update(Request $request, $id)
     {
-        // Validate incoming data.
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'capacity' => 'required|integer|min:1',
+        // Find the table by its ID
+        $table = Table::find($id);
+
+        if (!$table) {
+            return response()->json(['message' => 'Table not found'], 404);
+        }
+
+        // Validate incoming data
+        $validatedData = $request->validate([
+            'name'     => 'required|string|max:255',
+            'capacity' => 'required|integer',
             'location' => 'required|string|max:255',
         ]);
 
-        // Update the table record.
-        $table->update($validated);
+        // Update the table record
+        $table->update($validatedData);
 
-        // Redirect back with a success message.
-        return redirect()->route('beheerderTables.index')
-            ->with('success', 'Table updated successfully.');
+        // Return the updated table as JSON
+        return response()->json($table, 200);
     }
 
+    public function edit($id)
+    {
+        $table = Table::findOrFail($id); // Fetch the table by ID
+        return Inertia::render('EditTable', [
+            'table' => $table, // Pass the table data to the Vue component
+        ]);
+    }
     /**
      * Remove the specified table from storage.
      */
-    public function destroy(Table $table)
+    public function destroy($id)
     {
+        $table = Table::find($id);
+
+        if (!$table) {
+            return response()->json(['message' => 'Table not found'], 404);
+        }
+
         $table->delete();
 
-        // Redirect back with a success message.
-        return redirect()->route('beheerderTables.index')
-            ->with('success', 'Table deleted successfully.');
+        return response()->json(['message' => 'Table deleted successfully'], 200);
     }
 }

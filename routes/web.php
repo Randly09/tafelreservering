@@ -1,109 +1,235 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use App\Models\Table;
-use App\Http\Controllers\ReservationController;
-use App\Http\Controllers\TableController;
-use App\Models\Reservation;
 use Inertia\Inertia;
-use App\Http\Controllers\API\TableAvailabilityController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
-// Root route (Welcome page)
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TableController;
+use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\ReservationCRUDController;
+use App\Http\Controllers\API\TableAvailabilityController;
+
+/*
+|--------------------------------------------------------------------------
+| Public (No Auth) Routes
+|--------------------------------------------------------------------------
+*/
+
+// Root (Welcome page)
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
+        'canLogin'       => Route::has('login'),
+        'canRegister'    => Route::has('register'),
         'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
+        'phpVersion'     => PHP_VERSION,
     ]);
 });
 
-// Custom home route that checks user role after login
-Route::get('/home', function () {
-    $user = auth()->user();
-    if ($user->role === 'beheerder') {
-        return redirect()->route('beheerder.home');
-    }
-    return redirect()->route('reservations.index');
-})->middleware(['auth'])->name('home');
-
-
+// Table availability (API-like endpoint, no auth required?)
 Route::get('/tables/availability', [TableAvailabilityController::class, 'index']);
 
-// Routes for authenticated users
-Route::middleware('auth')->group(function () {
+// If you want a /home route that checks role:
+Route::get('/home', function () {
+    $user = auth()->user();
+    // Must be logged in for $user to exist
+    if (! $user) {
+        return redirect('/login');
+    }
 
-    // Beheerder dashboard route
-    Route::get('/beheerder', function () {
-        return Inertia::render('BeheerderDashboard');
-    })->name('beheerder.home');
-    Route::get('/beheerder', function () {
-        $reservations = Reservation::with(['table', 'user'])
-            ->latest() 
-            ->limit(10)
-            ->get();
+    if ($user->role === 'beheerder') {
+        return redirect()->route('beheerder.home');
+    } elseif ($user->role === 'klant') {
+        return redirect()->route('reservations.index');
+    }
 
-        return Inertia::render('BeheerderDashboard', [
-            'reservations' => $reservations,
-        ]);
-    })->name('beheerder.home')->middleware('auth');
-    Route::get('/beheerder/tables', [TableController::class, 'index'])
-        ->name('beheerderTables.index');
-
-    // Create a new table (assuming a form posts to this endpoint)
-    Route::post('/beheerder/tables', [TableController::class, 'store'])
-        ->name('beheerderTables.store');
-
-    // Update an existing table (PUT or PATCH method)
-    Route::match(['put', 'patch'], '/beheerder/tables/{table}', [TableController::class, 'update'])
-        ->name('beheerderTables.update');
-
-    // Delete a table
-    Route::delete('/beheerder/tables/{table}', [TableController::class, 'destroy'])
-        ->name('beheerderTables.destroy');
-
-        Route::middleware('auth')->group(function () {
-            Route::get('/beheerder/reservations', [TableController::class, 'adminIndex'])
-                 ->name('beheerderReservations.index');
-        });
+    // Default fallback
+    return redirect('/login');
+})->name('home');
 
 
-    // Klant reservations page route
-    Route::get('/reservations', function () {
-        return Inertia::render('Reservations');
-    })->name('reservations.index');
-    Route::get('/book-table/{id}', function ($id) {
-        $table = App\Models\Table::findOrFail($id);
-        $date = request()->query('date', date('Y-m-d'));
-        $time = request()->query('time', '');
-        return Inertia::render('BookTable', [
-            'table' => $table,
-            'reservationDate' => $date,
-            'reservationTime' => $time,
-        ]);
-    })->name('book-table')->middleware('auth');
-    Route::middleware('auth')->group(function () {
-        Route::post('/reservations', [ReservationController::class, 'store'])
-            ->name('reservations.store');
-    });
-    Route::get('/reserved-tables', [ReservationController::class, 'index'])
-        ->name('reservedTables.index');
+/*
+|--------------------------------------------------------------------------
+| Beheerder (Admin) Routes
+|--------------------------------------------------------------------------
+| Each route checks if user->role === 'beheerder'.
+| Otherwise, redirect to /login. 
+|--------------------------------------------------------------------------
+*/
 
-    Route::delete('/reservations/{id}', [ReservationController::class, 'destroy'])
-        ->name('reservations.destroy')
-        ->middleware('auth');
+// Dashboard
+Route::get('/beheerder', function () {
+    $user = auth()->user();
+    if (! $user || $user->role !== 'beheerder') {
+        return redirect('/login');
+    }
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+    // Example of loading reservations
+    $reservations = \App\Models\Reservation::with(['table', 'user'])
+        ->latest()
+        ->get();
+
+    return Inertia::render('BeheerderDashboard', [
+        'reservations' => $reservations,
+    ]);
+})->name('beheerder.home');
+
+// Show list of all tables
+Route::get('/beheerder/tables', function () {
+    $user = auth()->user();
+    if (! $user || $user->role !== 'beheerder') {
+        return redirect('/login');
+    }
+    return app(TableController::class)->index();
+})->name('beheerderTables.index');
+
+// Create a new table
+Route::post('/beheerder/tables', function () {
+    $user = auth()->user();
+    if (! $user || $user->role !== 'beheerder') {
+        return redirect('/login');
+    }
+    return app(TableController::class)->store(request());
+})->name('beheerderTables.store');
+
+// Update an existing table
+Route::match(['put', 'patch'], '/beheerder/tables/{table}', function (\App\Models\Table $table) {
+    $user = auth()->user();
+    if (! $user || $user->role !== 'beheerder') {
+        return redirect('/login');
+    }
+    return app(TableController::class)->update(request(), $table->id);
+})->name('beheerderTables.update');
+
+// Delete a table
+Route::delete('/beheerder/tables/{table}', function (\App\Models\Table $table) {
+    $user = auth()->user();
+    if (! $user || $user->role !== 'beheerder') {
+        return redirect('/login');
+    }
+    return app(TableController::class)->destroy($table->id);
+})->name('beheerderTables.destroy');
+
+// Possibly an admin route for reservations list
+Route::get('/beheerder/reservations', function () {
+    $user = auth()->user();
+    if (! $user || $user->role !== 'beheerder') {
+        return redirect('/login');
+    }
+    return app(TableController::class)->adminIndex();
+})->name('beheerderReservations.index');
+
+// Example: Admin deleting reservations
+Route::delete('/beheerder/reservations/{id}', function ($id) {
+    $user = auth()->user();
+    if (! $user || $user->role !== 'beheerder') {
+        return redirect('/login');
+    }
+    return app(ReservationCRUDController::class)->destroy($id);
+})->name('reservationsBeheer.destroy');
 
 
+/*
+|--------------------------------------------------------------------------
+| Klant (Customer) Routes
+|--------------------------------------------------------------------------
+| Each route checks if user->role === 'klant'.
+| Otherwise, redirect to /login.
+|--------------------------------------------------------------------------
+*/
+
+// Renders a "Reservations" Inertia page
+Route::get('/reservations', function () {
+    $user = auth()->user();
+    if (! $user || $user->role !== 'klant') {
+        return redirect('/login');
+    }
+    return Inertia::render('Reservations');
+})->name('reservations.index');
+
+// Book a specific table
+Route::get('/book-table/{id}', function ($id) {
+    $user = auth()->user();
+    if (! $user || $user->role !== 'klant') {
+        return redirect('/login');
+    }
+
+    $table = \App\Models\Table::findOrFail($id);
+    $date = request()->query('date', date('Y-m-d'));
+    $time = request()->query('time', '');
+
+    return Inertia::render('BookTable', [
+        'table'            => $table,
+        'reservationDate'  => $date,
+        'reservationTime'  => $time,
+    ]);
+})->name('book-table');
+
+// Create/store a reservation
+Route::post('/reservations', function () {
+    $user = auth()->user();
+    if (! $user || $user->role !== 'klant') {
+        return redirect('/login');
+    }
+    return app(ReservationController::class)->store(request());
+})->name('reservations.store');
+
+// Show "reserved tables"
+Route::get('/reserved-tables', function () {
+    $user = auth()->user();
+    if (! $user || $user->role !== 'klant') {
+        return redirect('/login');
+    }
+    return app(ReservationController::class)->index();
+})->name('reservedTables.index');
+
+// Possibly delete a reservation (if klant can do that)
+Route::delete('/reservations/{id}', function ($id) {
+    $user = auth()->user();
+    if (! $user || $user->role !== 'klant') {
+        return redirect('/login');
+    }
+    return app(ReservationController::class)->destroy($id);
+})->name('reservations.destroy');
+
+
+/*
+|--------------------------------------------------------------------------
+| Profile routes - If either role can do it,
+| just check if user is logged in
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/profile', function () {
+    if (! auth()->check()) {
+        return redirect('/login');
+    }
+    return app(ProfileController::class)->edit();
+})->name('profile.edit');
+
+Route::patch('/profile', function () {
+    if (! auth()->check()) {
+        return redirect('/login');
+    }
+    return app(ProfileController::class)->update(request());
+})->name('profile.update');
+
+Route::delete('/profile', function () {
+    if (! auth()->check()) {
+        return redirect('/login');
+    }
+    return app(ProfileController::class)->destroy(request());
+})->name('profile.destroy');
+
+
+/*
+|--------------------------------------------------------------------------
+| Authentication routes
+|--------------------------------------------------------------------------
+*/
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-    ->middleware('guest')
-    ->name('login');
+     ->middleware('guest')
+     ->name('login');
 
 require __DIR__ . '/auth.php';

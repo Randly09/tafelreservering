@@ -12,9 +12,7 @@ use App\Http\Controllers\ReservationCRUDController;
 use App\Http\Controllers\API\TableAvailabilityController;
 
 /*
-|--------------------------------------------------------------------------
 | Public (No Auth) Routes
-|--------------------------------------------------------------------------
 */
 
 // Root (Welcome page)
@@ -50,12 +48,7 @@ Route::get('/home', function () {
 
 
 /*
-|--------------------------------------------------------------------------
 | Beheerder (Admin) Routes
-|--------------------------------------------------------------------------
-| Each route checks if user->role === 'beheerder'.
-| Otherwise, redirect to /login. 
-|--------------------------------------------------------------------------
 */
 
 // Dashboard
@@ -131,15 +124,9 @@ Route::delete('/beheerder/reservations/{id}', function ($id) {
 
 
 /*
-|--------------------------------------------------------------------------
 | Klant (Customer) Routes
-|--------------------------------------------------------------------------
-| Each route checks if user->role === 'klant'.
-| Otherwise, redirect to /login.
-|--------------------------------------------------------------------------
 */
 
-// Renders a "Reservations" Inertia page
 Route::get('/reservations', function () {
     $user = auth()->user();
     if (! $user || $user->role !== 'klant') {
@@ -195,17 +182,14 @@ Route::delete('/reservations/{id}', function ($id) {
 
 
 /*
-|--------------------------------------------------------------------------
-| Profile routes - If either role can do it,
-| just check if user is logged in
-|--------------------------------------------------------------------------
+| Profile routes -
 */
 
 Route::get('/profile', function () {
     if (! auth()->check()) {
         return redirect('/login');
     }
-    return app(ProfileController::class)->edit();
+    return app(ProfileController::class)->edit(request());
 })->name('profile.edit');
 
 Route::patch('/profile', function () {

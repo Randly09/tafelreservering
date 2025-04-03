@@ -1,5 +1,14 @@
 <template>
+
     <div class="min-h-screen bg-gradient-to-b from-blue-900 to-blue-800 text-white py-8">
+      <div class="ml-8 mb-4">
+            <Link
+                :href="route('beheerderTables.index')"
+                class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600"
+            >
+                Terug
+            </Link>
+        </div>
       <div class="container mx-auto">
         <h1 class="text-3xl font-bold mb-6">Edit Table</h1>
         <form @submit.prevent="updateTable">
@@ -31,7 +40,7 @@
   
   <script setup>
   import { ref } from 'vue'
-  import { usePage } from '@inertiajs/vue3'
+  import { usePage, Link } from '@inertiajs/vue3'
   import axios from 'axios'
   
   const page = usePage()

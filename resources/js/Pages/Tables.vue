@@ -10,11 +10,9 @@
                 Terug
             </Link>
         </div>
-
         <!-- Container for both table and form -->
         <div class="container mx-auto">
             <h1 class="text-3xl font-bold mb-6">Tables</h1>
-
             <!-- Table List -->
             <div
                 v-if="tables.length"
@@ -72,7 +70,6 @@
             <div v-else class="text-center">
                 <p>No tables available.</p>
             </div>
-
             <!-- Form to Add a New Table -->
             <div class="mt-8 bg-white rounded-lg shadow-md p-4 text-black">
                 <h2 class="text-2xl font-bold mb-4">Add New Table</h2>
@@ -96,7 +93,7 @@
                     <div class="mb-4">
                         <select
                             v-model="form.location"
-                            class="p-2 border border-gray-300 rounded w-full sm:w-auto text-gray-800"
+                            class="p-2 pr-8 border border-gray-300 rounded w-full sm:w-auto text-gray-800"
                         >
                             <option value="" disabled>Location</option>
                             <option
@@ -119,7 +116,6 @@
         </div>
     </div>
 </template>
-
 <script setup>
 import { ref, onMounted } from "vue";
 import { Link } from "@inertiajs/vue3";
@@ -133,7 +129,6 @@ const form = ref({
     capacity: "",
     location: "",
 });
-
 function createTable() {
     axios
         .post("/api/tables", form.value)
@@ -147,7 +142,6 @@ function createTable() {
             console.error("Error creating table:", error);
         });
 }
-
 function fetchTables() {
     axios
         .get("/api/tables-data")
@@ -158,7 +152,6 @@ function fetchTables() {
             console.error("Error fetching tables:", error);
         });
 }
-
 function deleteTable(id) {
     if (confirm("Are you sure you want to delete this table?")) {
         axios
@@ -171,7 +164,6 @@ function deleteTable(id) {
             });
     }
 }
-
 onMounted(() => {
     fetchTables();
 });

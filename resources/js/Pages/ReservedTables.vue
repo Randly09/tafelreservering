@@ -15,7 +15,11 @@
                     Return to Home
                 </Link>
             </div>
-
+            <div class="mb-4 justify-center">
+                <Link href="/logout" method="post" as="button" type="button">
+                    Logout
+                </Link>
+            </div>
             <!-- If there are reservations, display the table -->
             <div
                 v-if="reservations.length"
@@ -62,15 +66,21 @@
                                         : "N/A"
                                 }}
                             </td>
-                            <td class="py-3 px-4 text-center">{{ reservation.date }}</td>
-                            <td class="py-3 px-4 text-center">{{ reservation.time }}</td>
+                            <td class="py-3 px-4 text-center">
+                                {{ reservation.date }}
+                            </td>
+                            <td class="py-3 px-4 text-center">
+                                {{ reservation.time }}
+                            </td>
                             <td class="py-3 px-4 text-center">
                                 {{ reservation.phone_number }}
                             </td>
                             <td class="py-3 px-4 text-center">
                                 {{ reservation.Occasion }}
                             </td>
-                            <td class="py-3 px-4 text-center">{{ reservation.status }}</td>
+                            <td class="py-3 px-4 text-center">
+                                {{ reservation.status }}
+                            </td>
                             <td class="py-3 px-4 text-center">
                                 <button
                                     class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"

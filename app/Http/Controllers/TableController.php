@@ -79,11 +79,18 @@ class TableController extends Controller
         return response()->json($table, 200);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        $table = Table::findOrFail($id); // Fetch the table by ID
+        $table = Table::findOrFail($id);
+    
+        // If the request is an XHR or wants JSON explicitly, return JSON
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json($table);
+        }
+    
+        // Otherwise return Inertia page
         return Inertia::render('EditTable', [
-            'table' => $table, // Pass the table data to the Vue component
+            'table' => $table,
         ]);
     }
     /**

@@ -1,12 +1,9 @@
 <template>
-    <!-- Full-screen dark gradient background -->
     <div
         class="min-h-screen bg-gradient-to-b from-blue-900 to-blue-800 text-white flex flex-col"
     >
         <div class="flex flex-col items-center justify-center pt-20 pb-20">
-            <!-- Company Logo -->
             <div class="mb-8">
-                <!-- Update src to your actual logo path in /public/images/ -->
                 <img
                     src="/images/logo.png"
                     alt="Restaurant Logo"
@@ -117,6 +114,7 @@ const minDate = new Date().toISOString().split("T")[0];
 const oneYearLater = new Date(now)
 oneYearLater.setFullYear(now.getFullYear() + 1)
 const maxDate = oneYearLater.toISOString().split('T')[0]
+
 
 const timeOptions = [];
 const startHour = 17;

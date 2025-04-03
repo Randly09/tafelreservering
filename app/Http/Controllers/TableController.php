@@ -6,6 +6,7 @@ use App\Models\Table;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Reservation;
+use Log;
 
 class TableController extends Controller
 {
@@ -14,7 +15,7 @@ class TableController extends Controller
     public function adminIndex()
     {
         $reservations = Reservation::with(['table', 'user'])
-            ->latest() // Orders by created_at descending
+            ->latest() 
             ->get();
 
         return Inertia::render('BeheerderDashboard', [
@@ -26,10 +27,8 @@ class TableController extends Controller
      */
     public function index()
     {
-        // Retrieve all tables from the database
         $tables = Table::all();
 
-        // Render the 'Tables' component and pass the tables data as a prop
         return Inertia::render('Tables', [
             'tables' => $tables,
         ]);
@@ -58,37 +57,41 @@ class TableController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Find the table by its ID
         $table = Table::find($id);
 
         if (!$table) {
             return response()->json(['message' => 'Table not found'], 404);
         }
 
-        // Validate incoming data
         $validatedData = $request->validate([
             'name'     => 'required|string|max:255',
             'capacity' => 'required|integer',
             'location' => 'required|string|max:255',
         ]);
 
-        // Update the table record
+        Log::info('Updating Table:', [
+            'table_id' => $table->id,
+            'updated_data' => $validatedData,
+        ]);
+
         $table->update($validatedData);
 
-        // Return the updated table as JSON
+
+
         return response()->json($table, 200);
     }
 
     public function edit(Request $request, $id)
     {
         $table = Table::findOrFail($id);
-    
-        // If the request is an XHR or wants JSON explicitly, return JSON
-        if ($request->ajax() || $request->wantsJson()) {
-            return response()->json($table);
-        }
-    
-        // Otherwise return Inertia page
+        
+        Log::info('Editing Table:', [
+            'table_id' => $table->id,
+            'name' => $table->name,
+            'capacity' => $table->capacity,
+            'location' => $table->location,
+        ]);
+
         return Inertia::render('EditTable', [
             'table' => $table,
         ]);
@@ -105,6 +108,11 @@ class TableController extends Controller
         }
 
         $table->delete();
+
+        Log::info('Deleting Table:', [
+            'table_id' => $table->id,
+            'name' => $table->name,
+        ]);
 
         return response()->json(['message' => 'Table deleted successfully'], 200);
     }

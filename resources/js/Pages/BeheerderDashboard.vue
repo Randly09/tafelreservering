@@ -2,12 +2,10 @@
     <div
         class="min-h-screen bg-gradient-to-b from-blue-900 to-blue-800 text-white"
     >
-        <!-- Header Navigation -->
         <header class="bg-blue-800 shadow">
             <div
                 class="container mx-auto flex items-center justify-between py-4 px-6"
             >
-                <!-- Logo and Title -->
                 <div class="flex items-center">
                     <img src="/Images/logo.png" alt="Logo" class="logoImage" />
                     <span class="text-xl font-bold">Admin Dashboard</span>
@@ -107,8 +105,6 @@
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Message for No Bookings -->
                 <div v-else class="text-center mt-6">
                     <p>No recent bookings available.</p>
                 </div>
@@ -118,7 +114,7 @@
 </template>
 
 <script setup>
-import { Head, Link, usePage } from "@inertiajs/vue3";
+import {  Link, usePage } from "@inertiajs/vue3";
 import { computed } from "vue";
 
 const { props } = usePage();

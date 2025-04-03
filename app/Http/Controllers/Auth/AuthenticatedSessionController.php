@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use Log;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -36,9 +37,22 @@ class AuthenticatedSessionController extends Controller
 
         if (auth()->user()->role === 'beheerder') {
 
+            // Log the user in as a 'beheerder'
+            Log::info('User logged in as beheerder:', [
+                'user_id' => auth()->user()->id,
+                'email' => auth()->user()->email,
+
+            ]);
+
             return redirect()->route('beheerder.home');
         } else {
 
+            // Log the user in as a 'gast'
+            Log::info('User logged in as gast:', [
+                'user_id' => auth()->user()->id,
+                'email' => auth()->user()->email,
+
+            ]);
             return redirect()->route('reservations.index');
         }
     }

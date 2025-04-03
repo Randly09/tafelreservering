@@ -1,7 +1,6 @@
 <template>
     <GuestLayout>
         <Head title="Book Table" />
-        <!-- Return to Home button -->
         <div class="mb-4 justify-center">
             <Link
                 :href="route('reservations.index')"

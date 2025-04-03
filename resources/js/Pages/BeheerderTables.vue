@@ -69,7 +69,6 @@
                             <td class="py-3 px-4">{{ table.capacity }}</td>
                             <td class="py-3 px-4">{{ table.location }}</td>
                             <td class="py-3 px-4">
-                                <!-- Buttons for edit and delete; edit functionality to be implemented as needed -->
                                 <button
                                     class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                                     @click="deleteTable(table.id)"
@@ -78,7 +77,6 @@
                                 </button>
                             </td>
                             <td class="py-3 px-4">
-                                <!-- Buttons for edit and delete; edit functionality to be implemented as needed -->
                                 <button
                                     class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                                     @click="updateTable(table.id)"
@@ -102,24 +100,16 @@ import { Link, usePage } from "@inertiajs/vue3";
 import { ref, computed } from "vue";
 import { Inertia } from "@inertiajs/inertia";
 
-// Access the tables prop passed from the route.
 const { props } = usePage();
 const tables = computed(() => props.tables || []);
 
-// Form for creating a new table.
 const form = ref({
     name: "",
     capacity: "",
     location: "",
 });
 
-function createTable() {
-    Inertia.post(route("beheerderTables.store"), form.value, {
-        onSuccess: () => {
-            form.value = { name: "", capacity: "", location: "" };
-        },
-    });
-}
+
 
 function deleteTable(id) {
     if (confirm("Are you sure you want to delete this table?")) {

@@ -1,12 +1,9 @@
 <template>
-    <!-- Full-page gradient background and white text -->
     <div
         class="min-h-screen bg-gradient-to-b from-blue-900 to-blue-800 text-white py-8"
     >
         <div class="container mx-auto">
             <h1 class="text-3xl font-bold mb-6">Your Reservations</h1>
-
-            <!-- Return to Home button -->
             <div class="mb-4">
                 <Link
                     :href="route('reservations.index')"

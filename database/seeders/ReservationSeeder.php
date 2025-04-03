@@ -18,6 +18,7 @@ class ReservationSeeder extends Seeder
         $user = User::where('role', 'klant')->first();
         $user2 = User::where('role', 'klant')->skip(1)->first();
         $table = Table::first();
+        $table2 = Table::skip(1)->first();
 
         Reservation::create([
             'user_id' => $user->id,
@@ -32,7 +33,7 @@ class ReservationSeeder extends Seeder
         
         Reservation::create([
             'user_id' => $user2->id,
-            'table_id' => $table->id,
+            'table_id' => $table2->id,
             'date' => '2025-12-25',
             'time' => '19:00',
             'number_of_people' => 2,

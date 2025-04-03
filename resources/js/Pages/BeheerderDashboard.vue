@@ -57,7 +57,7 @@
                                     Reservation ID
                                 </th>
                                 <th class="py-3 px-4 text-center">Table</th>
-                                <th class="py-3 px-4 text-center">Klant</th>
+                                <th class="py-3 px-4 text-center">Client Name</th>
                                 <th class="py-3 px-4 text-center">Date</th>
                                 <th class="py-3 px-4 text-center">Time</th>
                                 <th class="py-3 px-4 text-center">Phone</th>
